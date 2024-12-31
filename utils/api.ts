@@ -51,4 +51,15 @@ export const api = {
     });
     return response.json();
   },
+
+  async getParsingTable(grammar?: GrammarStructure) {
+    const response = await fetch(`${BASE_URL}/parsing_tables`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(grammar),
+    });
+    return response.json();
+  },
 };

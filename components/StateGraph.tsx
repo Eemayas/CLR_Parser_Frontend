@@ -108,17 +108,18 @@ const StateGraph: React.FC<StateGraphProps> = ({ states }) => {
   // Pass this handler to ReactFlow's node interaction props.
 
   return (
-    <>
+    <div style={{ width: "100%", height: "100vh" }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        fitView
-        fitViewOptions={{ padding: 0.1 }}
-        nodesDraggable={true} // Ensure this is true
+      nodes={nodes}
+      edges={edges}
+      fitView
+      fitViewOptions={{ padding: 0.1 }}
+      nodesDraggable={true}
+      style={{ width: "100%", height: "100%" }}
       >
-        <Background gap={10} size={0.5} /> {/* Smaller grid background */}
+      <Background gap={10} size={0.5} /> {/* Smaller grid background */}
       </ReactFlow>
-    </>
+    </div>
   );
 };
 
