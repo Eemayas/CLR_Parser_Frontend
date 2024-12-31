@@ -36,6 +36,8 @@ interface StateGraphProps {
 }
 
 const StateGraph: React.FC<StateGraphProps> = ({ states }) => {
+  console.log({ states });
+  if (Object.keys(states).length === 0) return;
   const positions: Record<string, { x: number; y: number }> = {};
   calculateNodePositions("I0", 0, 0, positions, new Set(), states);
 

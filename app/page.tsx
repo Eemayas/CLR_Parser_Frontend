@@ -4,24 +4,16 @@
 import MoveUpFadeAnimation from "@/components/MoveUpFadeAnimation";
 import { Highlight } from "@/components/ui/hero-highlight";
 import { styles } from "./style";
-import { FormEventHandler, useState } from "react";
+import { useEffect, useState } from "react";
 import ActionButton from "@/components/ActionButton";
-import { CircleX } from "lucide-react";
 import { GrammarStructure, parseGrammar } from "@/lib/grammerInputParse";
 import StateGraph from "@/components/StateGraph";
-import { StateList, states } from "./constant";
-import CLRParsingTable from "@/components/CLRParsingTable";
+import { states } from "./constant";
 import { parseCLRData } from "@/lib/parseCLRData";
 import { api } from "@/utils/api";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import FirstAndFollowTable from "@/components/FirstAndFollowTable";
+import { TFirstAndFollow } from "@/types";
+import GrammerRuleModal from "@/components/GrammerRuleModal";
 
 export default function HeroHighlightDemo() {
   const { table, terminals, nonTerminals } = parseCLRData(states);
@@ -44,7 +36,7 @@ export default function HeroHighlightDemo() {
           <GrammerInputForm />
         </div>
         <hr className="my-8 h-[2px] border-0 bg-gray-300 dark:bg-gray-600" />
-        <div className="flex flex-col  h-screen ">
+        {/*   <div className="flex flex-col  h-screen ">
           <h1
             className={`${styles.sectionHeadText} text-center text-text-light dark:text-text-dark`}
           >
@@ -52,8 +44,8 @@ export default function HeroHighlightDemo() {
               Canonical Collection of CLR(1) Parsing
             </Highlight>{" "}
           </h1>
-          <StateGraph states={states} />
-        </div>
+          <StateGraph states={states} /> 
+        </div> 
         <div className="flex flex-col  h-screen ">
           <h1
             className={`${styles.sectionHeadText} text-center text-text-light dark:text-text-dark`}
@@ -67,14 +59,18 @@ export default function HeroHighlightDemo() {
             terminals={terminals}
             nonTerminals={nonTerminals}
           />
-        </div>
+        </div> */}
       </MoveUpFadeAnimation>
     </div>
   );
 }
 
 const GrammerInputForm = () => {
-  const [grammer, setGrammer] = useState("");
+  const [grammer, setGrammer] = useState(`S->L=R
+S->R
+L->*R
+L->id
+R->L`);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setError] = useState<string | null>(null);
   const [firstFollowSets, setFirstFollowSets] = useState<TFirstAndFollow>({
@@ -118,7 +114,17 @@ const GrammerInputForm = () => {
     try {
       const result = await api.getCanonicalCollection(grammar);
       console.log("Canonical Collection:", result);
-      setCanonicalCollection(result.canonical_collection);
+      let temp: { [key: string]: { items: any; transitions: any } } = {};
+      result.canonical_collection.map((collection: { [key: string]: any }) => {
+        Object.keys(collection).map((state) => {
+          temp[state] = {
+            items: collection[state].items,
+            transitions: collection[state].transitions,
+          };
+        });
+      });
+      console.log(temp);
+      setCanonicalCollection(temp);
     } catch (err) {
       console.error("Error fetching canonical collection:", err);
       setError("Failed to fetch canonical collection");
@@ -154,31 +160,9 @@ const GrammerInputForm = () => {
     }
   };
 
-  function convertToStateList(data: any): StateList {
-    const stateList: StateList = {};
-
-    data.forEach((entry: any) => {
-      const productionKey = entry.production[0]; // Use the first element of the production as the state key.
-      const lookahead = entry.lookahead[0]; // Assuming we only care about the first lookahead element.
-
-      // Ensure the state exists in stateList
-      if (!stateList[productionKey]) {
-        stateList[productionKey] = {
-          items: entry.production.flat(), // Flatten production array to a single-level array
-          transitions: {},
-        };
-      }
-
-      // Add transition for the lookahead
-      stateList[productionKey].transitions[lookahead] = productionKey;
-    });
-
-    return stateList;
-  }
-  console.log(canonicalCollection);
-  console.log(
-    canonicalCollection ? convertToStateList(canonicalCollection) : []
-  );
+  useEffect(() => {
+    console.log(canonicalCollection);
+  }, [canonicalCollection]);
 
   return (
     <div className="flex flex-col">
@@ -229,6 +213,7 @@ const GrammerInputForm = () => {
         </div>
       </div>
       <div className="p-4">
+        <hr className="my-8 h-[2px] border-0 bg-gray-300 dark:bg-gray-600" />
         <h1
           className={`${styles.sectionHeadText} text-center text-text-light dark:text-text-dark`}
         >
@@ -236,197 +221,19 @@ const GrammerInputForm = () => {
             First and Follow of given Grammer
           </Highlight>{" "}
         </h1>
-        <GrammarTable {...firstFollowSets} />{" "}
+        <FirstAndFollowTable {...firstFollowSets} />{" "}
+        <hr className="my-8 h-[2px] border-0 bg-gray-300 dark:bg-gray-600" />
         <h1
           className={`${styles.sectionHeadText} text-center text-text-light dark:text-text-dark`}
         >
           <Highlight className="text-black dark:text-white">
-            First and Follow of given Grammer
+            Canonical Collection of CLR(1) Parsing
           </Highlight>{" "}
         </h1>
-        <h1 className="text-xl font-bold">Flask API with Next.js</h1>
-        {message && <p className="text-green-500">{message}</p>}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-        <pre className="bg-gray-100 p-2 mt-4 rounded">
-          {JSON.stringify(canonicalCollection, null, 2)}
-        </pre>
+        {Object.keys(canonicalCollection).length > 0 && (
+          <StateGraph states={canonicalCollection} />
+        )}
       </div>
-    </div>
-  );
-};
-
-export const GrammerRuleModal = ({
-  isShow,
-  closeModal,
-}: {
-  isShow: boolean;
-  closeModal: () => void;
-}) => {
-  const rules = [
-    {
-      title: "Rule Format",
-      description: "<Non-terminal> -> <Production>",
-      examples: ["S -> NP VP", "NP -> Det Noun", "VP -> Verb NP"],
-    },
-    {
-      title: "Whitespace Optionality",
-      description:
-        "Spaces around -> are optional. Space separates production parts.",
-      examples: ["S->NP VP", "Det -> the | a"],
-    },
-    {
-      title: "Production Alternatives",
-      description: "Multiple alternatives separated by |",
-      examples: ["Noun -> dog | cat | mouse"],
-    },
-    {
-      title: "Multiple Words",
-      description: "Multiple tokens allowed if separated by spaces",
-      examples: ["NP -> Det Noun"],
-    },
-    {
-      title: "Non-terminal Capitalization",
-      description: "Non-terminals must use uppercase letters",
-      examples: ["NP -> Noun"],
-    },
-    {
-      title: "Terminal Symbols",
-      description: "Terminals must be alphanumeric, cannot start with numbers",
-      examples: ["Verb -> run | jump"],
-    },
-    {
-      title: "Empty Productions",
-      description: "Empty productions use ε (epsilon)",
-      examples: ["NP -> Det | ε"],
-    },
-  ];
-
-  return (
-    <>
-      <div
-        className={`fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none ${
-          isShow ? "flex" : "hidden"
-        }`}
-      >
-        <div
-          className={`rounded-[10px] bg-gradient-to-br from-green-400 to-blue-600 p-[2px] text-gray-900 hover:text-white dark:text-white md:w-[30rem]`}
-        >
-          <div className="relative h-[80vh] w-auto max-w-3xl rounded-lg bg-white p-6 dark:bg-black">
-            {/* Close icon */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-            >
-              <CircleX className="h-6 w-6" onClick={closeModal} />
-            </button>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Grammar Rules
-            </h1>
-            <div
-              className="space-y-8 overflow-y-auto max-h-[70vh]"
-              style={{
-                msOverflowStyle: "none",
-                scrollbarWidth: "none",
-                WebkitOverflowScrolling: "touch",
-              }}
-            >
-              {rules.map((rule, index) => (
-                <div key={index} className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                    {index + 1}. {rule.title}
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300 text-sm mb-2">
-                    {rule.description}
-                  </p>
-                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                    <p className="font-mono text-sm text-blue-600 dark:text-blue-400 mb-2 underline">
-                      Examples:
-                    </p>
-                    {rule.examples.map((example, i) => (
-                      <code
-                        key={i}
-                        className="block text-sm text-gray-800 dark:text-gray-200 bg-gray-200 dark:bg-gray-900 p-2 rounded-md"
-                      >
-                        {example}
-                      </code>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-center mt-6">
-              {/* <button
-                onClick={closeModal}
-                className="bg-gray-300 text-black p-3 rounded-md shadow-sm hover:shadow-lg transition duration-200 ease-in-out"
-              >
-                Close
-              </button> */}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-const data = {
-  FIRST: {
-    S: ["S"],
-    "S'": ["S"],
-    g: ["r"],
-    r: ["r"],
-  },
-  FOLLOW: {
-    "S'": ["$"],
-    g: [],
-  },
-};
-
-// Merge the FIRST and FOLLOW data into a unified structure
-const processData = (data: any) => {
-  const symbols = new Set([
-    ...Object.keys(data.FIRST),
-    ...Object.keys(data.FOLLOW),
-  ]);
-
-  return Array.from(symbols).map((symbol) => ({
-    symbol,
-    first: data.FIRST[symbol] ? `{${data.FIRST[symbol].join(", ")}}` : "{}",
-    follow: data.FOLLOW[symbol] ? `{${data.FOLLOW[symbol].join(", ")}}` : "{}",
-  }));
-};
-
-type TFirstAndFollow = {
-  FIRST: {
-    [key: string]: string[];
-  };
-  FOLLOW: {
-    [key: string]: string[] | never[];
-  };
-};
-
-const GrammarTable = (data: TFirstAndFollow) => {
-  const rows = processData(data);
-
-  return (
-    <div className="p-4">
-      <Table className="table-auto border-collapse border border-gray-300">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="border border-gray-300">Symbol</TableHead>
-            <TableHead className="border border-gray-300">First</TableHead>
-            <TableHead className="border border-gray-300">Follow</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map(({ symbol, first, follow }) => (
-            <TableRow key={symbol}>
-              <TableCell className="border border-gray-300">{symbol}</TableCell>
-              <TableCell className="border border-gray-300">{first}</TableCell>
-              <TableCell className="border border-gray-300">{follow}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
     </div>
   );
 };
