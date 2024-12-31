@@ -1,12 +1,6 @@
 /** @format */
 
-export default interface State {
-  items: string[];
-  transitions: { [key: string]: string };
-}
-export interface StateList {
-  [key: string]: State;
-}
+import State from "@/types";
 
 // export const states: { [key: string]: State } = {
 //   I0: {

@@ -8,18 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-interface TableData {
-  stateName: string;
-  goto: Record<string, string | null>;
-  action: Record<string, string | null>;
-}
-
-interface CLRParsingTableProps {
-  table: TableData[];
-  terminals: string[];
-  nonTerminals: string[];
-}
+import { CLRParsingTableProps } from "@/types";
 
 const CLRParsingTable: React.FC<CLRParsingTableProps> = ({
   table,

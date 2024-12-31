@@ -6,14 +6,14 @@ import { Highlight } from "@/components/ui/hero-highlight";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
 import ActionButton from "@/components/ActionButton";
-import { GrammarStructure, parseGrammar } from "@/lib/grammerInputParse";
 import StateGraph from "@/components/StateGraph";
 import { states } from "./constant";
 import { parseCLRData } from "@/lib/parseCLRData";
 import { api } from "@/utils/api";
 import FirstAndFollowTable from "@/components/FirstAndFollowTable";
-import { TFirstAndFollow } from "@/types";
+import { GrammarStructure, TFirstAndFollow } from "@/types";
 import GrammerRuleModal from "@/components/GrammerRuleModal";
+import { parseGrammar } from "@/lib/grammerInputParse";
 
 export default function HeroHighlightDemo() {
   const { table, terminals, nonTerminals } = parseCLRData(states);

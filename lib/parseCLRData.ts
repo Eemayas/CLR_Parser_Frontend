@@ -1,6 +1,6 @@
 /** @format */
 
-import { StateList } from "@/app/constant";
+import { StateList } from "@/types";
 
 export const parseCLRData = (states: StateList) => {
   const terminals = new Set<string>();

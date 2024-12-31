@@ -1,6 +1,6 @@
 /** @format */
 
-import { StateList } from "@/app/constant";
+import { StateGraphProps, StateList } from "@/types";
 import React from "react";
 import ReactFlow, { Node, Edge, Background, Position } from "reactflow";
 import "reactflow/dist/style.css";
@@ -30,10 +30,6 @@ const calculateNodePositions = (
     }
   });
 };
-
-interface StateGraphProps {
-  states: StateList;
-}
 
 const StateGraph: React.FC<StateGraphProps> = ({ states }) => {
   console.log({ states });

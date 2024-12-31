@@ -1,10 +1,6 @@
 /** @format */
 
-export type GrammarRule = [string, string[]];
-
-export interface GrammarStructure {
-  grammar: GrammarRule[];
-}
+import { GrammarStructure } from "@/types";
 
 export const parseGrammar = (input: string): GrammarStructure => {
   const grammar: GrammarStructure = { grammar: [] }; // Initialize with the correct structure

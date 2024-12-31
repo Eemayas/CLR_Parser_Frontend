@@ -1,6 +1,6 @@
 /** @format */
 
-import { GrammarStructure } from "@/lib/grammerInputParse";
+import { GrammarStructure } from "@/types";
 
 const BASE_URL = "http://127.0.0.1:5000"; // Replace with your Flask server URL
 
@@ -20,7 +20,6 @@ export const api = {
   },
 
   async initializeParser(grammar: GrammarStructure) {
-    console.log(grammar);
     const response = await fetch(`${BASE_URL}/initialize`, {
       method: "POST",
       headers: {
