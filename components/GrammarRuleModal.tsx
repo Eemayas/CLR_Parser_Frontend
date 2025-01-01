@@ -2,7 +2,7 @@
 
 import { CircleX } from "lucide-react";
 
-const GrammerRuleModal = ({
+const GrammarRuleModal = ({
   isShow,
   closeModal,
 }: {
@@ -116,4 +116,4 @@ const GrammerRuleModal = ({
   );
 };
 
-export default GrammerRuleModal;
+export default GrammarRuleModal;

@@ -61,12 +61,12 @@ export const parseGrammar = (input: string): GrammarStructure => {
       productions,
     });
   }
-  let formatted_grammer: GrammarRule[] = [];
+  let formatted_grammar: GrammarRule[] = [];
 
   grammar.map((entry) => {
     // console.log([entry["nonTerminal"], entry["productions"][0]]);
-    formatted_grammer.push([entry["nonTerminal"], entry["productions"][0]]);
+    formatted_grammar.push([entry["nonTerminal"], entry["productions"][0]]);
   });
 
-  return { grammar: formatted_grammer };
+  return { grammar: formatted_grammar };
 };

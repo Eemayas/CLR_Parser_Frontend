@@ -20,8 +20,8 @@ const ParseStringTable: React.FC<ParseStringTableProps> = ({
   parseStringResult,
 }) => {
   return (
-    <Table className="table-auto border-collapse border border-gray-300 w-fit min-w-[800px] mx-auto mt-9">
-      <TableCaption>{"parsing result of given grammer"}</TableCaption>
+    <Table className="table-auto border-collapse border  border-gray-300 w-fit min-w-[800px] mx-auto mt-9">
+      <TableCaption>{"Parsing result of given grammar"}</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="border border-gray-300">Stack</TableHead>

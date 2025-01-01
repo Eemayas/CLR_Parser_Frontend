@@ -32,7 +32,6 @@ const calculateNodePositions = (
 };
 
 const StateGraph: React.FC<StateGraphProps> = ({ states }) => {
-  console.log({ states });
   if (Object.keys(states).length === 0) return;
   const positions: Record<string, { x: number; y: number }> = {};
   calculateNodePositions("I0", 0, 0, positions, new Set(), states);
@@ -108,16 +107,16 @@ const StateGraph: React.FC<StateGraphProps> = ({ states }) => {
   // Pass this handler to ReactFlow's node interaction props.
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <div style={{ width: "80%", height: "80vh" }}>
       <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      fitView
-      fitViewOptions={{ padding: 0.1 }}
-      nodesDraggable={true}
-      style={{ width: "100%", height: "100%" }}
+        nodes={nodes}
+        edges={edges}
+        fitView
+        fitViewOptions={{ padding: 0.1 }}
+        nodesDraggable={true}
+        style={{ width: "100%", height: "100%" }}
       >
-      <Background gap={10} size={0.5} /> {/* Smaller grid background */}
+        <Background gap={10} size={0.5} /> {/* Smaller grid background */}
       </ReactFlow>
     </div>
   );

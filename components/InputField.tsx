@@ -13,17 +13,8 @@ const InputField = ({
   errorMessage?: string;
   placeholder?: string;
 }) => {
-  const inputClassNames = `
-    ${
-      errorMessage
-        ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
-        : "bg-gray-50 border-gray-300 text-text-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 dark:text-text-dark dark:placeholder-gray-500 dark:border-gray-600"
-    }
-    rounded-lg text-sm block w-full p-2.5 dark:bg-gray-700
-  `;
   return (
     <div>
-        
       <label
         htmlFor={`input-${placeholder}`}
         className={`mb-2 block text-sm font-medium ${

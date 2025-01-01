@@ -30,7 +30,7 @@ const FirstAndFollowTable = (data: TFirstAndFollow) => {
 
   return (
     <div className="p-4">
-      <Table className="table-auto border-collapse border border-gray-300">
+      <Table className="table-auto border-collapse border  border-gray-300 w-fit min-w-[800px] mx-auto mt-9">
         <TableHeader>
           <TableRow>
             <TableHead className="border border-gray-300">Symbol</TableHead>

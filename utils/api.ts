@@ -64,7 +64,6 @@ export const api = {
     return response.json();
   },
   async getPraseStringResult(grammar: GrammarStructure, inputstr: string) {
-    console.log({ ...grammar, inputstr });
     const response = await fetch(`${BASE_URL}/parse`, {
       method: "POST",
       headers: {

@@ -12,7 +12,7 @@ import MoveUpFadeAnimation from "@/components/MoveUpFadeAnimation";
 import { Highlight } from "@/components/ui/hero-highlight";
 import { styles } from "./style";
 import ActionButton from "@/components/ActionButton";
-import { parseGrammar } from "@/lib/grammerInputParse";
+import { parseGrammar } from "@/lib/grammarInputParse";
 import StateGraph from "@/components/StateGraph";
 import { api } from "@/utils/api";
 import FirstAndFollowTable from "@/components/FirstAndFollowTable";
@@ -22,13 +22,13 @@ import {
   TableData,
   TFirstAndFollow,
 } from "@/types";
-import GrammerRuleModal from "@/components/GrammerRuleModal";
+import GrammarRuleModal from "@/components/GrammarRuleModal";
 import ParsingTable, { TParsingTable } from "@/components/ParsingTable";
 import ParseStringTable from "@/components/ParseStringTable";
 import InputField from "@/components/InputField";
 
 export default function HeroHighlightDemo() {
-  const [grammer, setGrammer] = useState<string>(
+  const [grammar, setGrammar] = useState<string>(
     "S->L = R\nS->R\nL-> * R\nL->id\nR->L"
   );
   const [testString, setTestString] = useState<string>("id = id * id");
@@ -94,7 +94,8 @@ export default function HeroHighlightDemo() {
   const fetchParsingTable = useCallback(async (grammar: GrammarStructure) => {
     try {
       const result = await api.getParsingTable(grammar);
-      setParsingTable(result.combined_table);
+      console.log(result);
+      setParsingTable(result);
     } catch (err) {
       setError("Failed to fetch FIRST and FOLLOW sets");
     }
@@ -119,7 +120,7 @@ export default function HeroHighlightDemo() {
     if (errorMessage) return;
 
     try {
-      const parsedGrammar = parseGrammar(grammer);
+      const parsedGrammar = parseGrammar(grammar);
       await Promise.all([
         initializeParser(parsedGrammar),
         fetchFirstFollowSets(parsedGrammar),
@@ -144,7 +145,7 @@ export default function HeroHighlightDemo() {
     if (errorMessageTestString) return;
 
     try {
-      const parsedGrammar = parseGrammar(grammer);
+      const parsedGrammar = parseGrammar(grammar);
       await fetchPraseStringResult(parsedGrammar, testString);
     } catch (error) {
       setErrorTestString("Error processing test string");
@@ -167,15 +168,15 @@ export default function HeroHighlightDemo() {
         </h2>
         <hr className="my-8 h-[2px] border-0 bg-gray-300 dark:bg-gray-600" />
         <div className="mt-10 flex w-full justify-center">
-          <GrammerInputForm
+          <GrammarInputForm
             errorMessage={errorMessage}
             setError={setError}
-            grammer={grammer}
-            setGrammer={setGrammer}
+            grammar={grammar}
+            setGrammar={setGrammar}
             handleSubmit={handleSubmit}
           />
         </div>
-        {grammer && (
+        {grammar && (
           <>
             {" "}
             {Object.keys(firstFollowSets.FIRST).length > 0 &&
@@ -238,7 +239,30 @@ export default function HeroHighlightDemo() {
                   />
                 </div>
                 {parsingStringResult && (
-                  <ParseStringTable parseStringResult={parsingStringResult} />
+                  <>
+                    <div
+                      className={`mt-8 p-4 border rounded-lg w-fit mx-auto ${
+                        parsingStringResult.success
+                          ? "bg-green-50 border-green-500 dark:bg-green-800"
+                          : "bg-red-50 border-red-500 dark:bg-red-800"
+                      }`}
+                    >
+                      {parsingStringResult.success ? (
+                        <pre className="text-green-600 dark:text-green-400 text-center text-lg font-semibold">
+                          String is Parsed Successfully
+                        </pre>
+                      ) : (
+                        <pre className="text-red-600 dark:text-red-400 text-center text-lg font-semibold">
+                          Parsing Failed: {parsingStringResult.error}
+                        </pre>
+                      )}
+                      <div className="mt-4">
+                        <ParseStringTable
+                          parseStringResult={parsingStringResult}
+                        />
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -249,19 +273,19 @@ export default function HeroHighlightDemo() {
   );
 }
 
-type GrammerInputFormProps = {
+type GrammarInputFormProps = {
   errorMessage: string | null;
   setError: Dispatch<SetStateAction<string | null>>;
-  grammer: string;
-  setGrammer: Dispatch<SetStateAction<string>>;
+  grammar: string;
+  setGrammar: Dispatch<SetStateAction<string>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
-const GrammerInputForm: React.FC<GrammerInputFormProps> = ({
+const GrammarInputForm: React.FC<GrammarInputFormProps> = ({
   errorMessage,
   setError,
-  grammer,
-  setGrammer,
+  grammar,
+  setGrammar,
   handleSubmit,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -276,7 +300,7 @@ const GrammerInputForm: React.FC<GrammerInputFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newGrammar = e.target.value;
-    setGrammer(newGrammar);
+    setGrammar(newGrammar);
     if (!validateGrammar(newGrammar)) {
       setError("Invalid grammar format. Please check your input.");
     } else {
@@ -291,8 +315,8 @@ const GrammerInputForm: React.FC<GrammerInputFormProps> = ({
         onSubmit={handleSubmit}
       >
         <label
-          htmlFor="github-repo-link"
-          className={`block text-sm font-medium ${
+          htmlFor="GrammarInputForm"
+          className={`mb-2 block text-sm font-medium  ${
             errorMessage
               ? "text-red-700 dark:text-red-500"
               : "text-text-light dark:text-text-dark"
@@ -302,13 +326,14 @@ const GrammerInputForm: React.FC<GrammerInputFormProps> = ({
         </label>
         <textarea
           rows={6}
-          value={grammer}
+          id="GrammarInputForm"
+          value={grammar}
           onChange={handleChange}
           className={`border ${
             errorMessage
               ? "border-red-500 bg-red-50 text-red-900 placeholder-red-700 focus:border-red-500 focus:ring-red-500 dark:border-red-500 dark:text-red-500 dark:placeholder-red-500"
               : "border-gray-300 bg-gray-50 text-text-light placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:text-text-dark dark:placeholder-gray-500"
-          }`}
+          } block w-full rounded-lg p-2.5 text-sm dark:bg-gray-700`}
           placeholder="S -> A B | C\nA -> a\nB -> b\nC -> c"
         ></textarea>
         {errorMessage && (
@@ -325,7 +350,7 @@ const GrammerInputForm: React.FC<GrammerInputFormProps> = ({
         >
           See Rules and Examples
         </div>
-        <GrammerRuleModal
+        <GrammarRuleModal
           isShow={showModal}
           closeModal={() => setShowModal(false)}
         />
