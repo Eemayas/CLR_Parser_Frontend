@@ -38,3 +38,20 @@ export interface StateList {
 export interface StateGraphProps {
   states: StateList;
 }
+
+export type TParsingStringStep = {
+  action: string;
+  input: string;
+  stack: string;
+};
+
+export type TParsingResult =
+  | {
+      steps: TParsingStringStep[];
+      success: true;
+    }
+  | {
+      error: string;
+      steps: TParsingStringStep[];
+      success: false;
+    };

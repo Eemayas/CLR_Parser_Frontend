@@ -1,6 +1,7 @@
 /** @format */
 
 import { GrammarStructure } from "@/types";
+import { CodeSquare } from "lucide-react";
 
 const BASE_URL = "http://127.0.0.1:5000"; // Replace with your Flask server URL
 
@@ -59,6 +60,17 @@ export const api = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(grammar),
+    });
+    return response.json();
+  },
+  async getPraseStringResult(grammar: GrammarStructure, inputstr: string) {
+    console.log({ ...grammar, inputstr });
+    const response = await fetch(`${BASE_URL}/parse`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...grammar, input_string: inputstr }),
     });
     return response.json();
   },
