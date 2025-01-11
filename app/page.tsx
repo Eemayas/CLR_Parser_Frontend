@@ -200,7 +200,7 @@ export default function HeroHighlightDemo() {
                   className={`${styles.sectionHeadText} text-center text-text-light dark:text-text-dark`}
                 >
                   <Highlight className="text-black dark:text-white">
-                    Canonical Collection of CLR(1) Parsing
+                    Canonical Collection of LR(1) Items
                   </Highlight>
                 </h1>
                 <StateGraph states={canonicalCollection} />
