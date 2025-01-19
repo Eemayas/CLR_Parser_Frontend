@@ -1,10 +1,9 @@
 /** @format */
 
 import { GrammarStructure } from "@/types";
-import { CodeSquare } from "lucide-react";
 
-const BASE_URL = "https://clr-parser-flask.vercel.app"; // Replace with your Flask server URL
-// const BASE_URL = "http://127.0.0.1:5000"; // Replace with your Flask server URL
+const BASE_URL = "https://clr-parser-flask.vercel.app";
+// const BASE_URL = "http://127.0.0.1:5000";
 
 export const api = {
   async getHome() {
